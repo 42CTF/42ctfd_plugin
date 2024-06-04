@@ -1,5 +1,5 @@
+from CTFd.utils.decorators import admins_only, authed_only
 from flask import render_template
-from CTFd.utils.decorators import authed_only, admins_only
 
 
 def init(app):

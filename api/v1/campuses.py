@@ -1,18 +1,18 @@
-from flask import request
-from flask_restx import Namespace, Resource
-
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.constants import RawEnum
 from CTFd.models import db
 from CTFd.utils.decorators import admins_only
-from CTFd.utils.user import is_admin
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.user import is_admin
+from flask import request
+from flask_restx import Namespace, Resource
 
 from ...models import Campuses
 from ...schemas.campuses import CampusSchema
 from ...utils import get_campus
 
 campuses_namespace = Namespace("campuses", description="Endpoint to retrieve Campuses")
+
 
 @campuses_namespace.route("")
 class CampusList(Resource):
@@ -32,13 +32,14 @@ class CampusList(Resource):
         },
         location="query",
     )
-
     def get(self, query_args):
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
         filters = build_model_filters(model=Campuses, query=q, field=field)
 
-        campuses = db.session.query(Campuses).filter_by(**query_args).filter(*filters).all()
+        campuses = (
+            db.session.query(Campuses).filter_by(**query_args).filter(*filters).all()
+        )
         schema = CampusSchema(many=True)
         response = schema.dump(campuses)
         if response.errors:

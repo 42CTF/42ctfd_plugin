@@ -1,14 +1,15 @@
 from pathlib import Path
-from CTFd.utils.plugins import override_template
+
 from CTFd.api import CTFd_API_v1
 from CTFd.plugins.migrations import upgrade
+from CTFd.utils.plugins import override_template
 
-from .translate import init as init_babel
-from .scoreboard import init as init_scoreboard
 from .admin.campus import init as init_admin_campus
 from .api.v1.campuses import campuses_namespace
-from .models import Users, Campuses
-from .schemas.campuses import CampusSchema
+from .models import Campuses, Users  # noqa: F401
+from .schemas.campuses import CampusSchema  # noqa: F401
+from .scoreboard import init as init_scoreboard
+from .translate import init as init_babel
 
 
 def load(app):
@@ -33,5 +34,7 @@ def load(app):
     # parent.parent.parent seems a bit dirty to me,
     # TODO: maybe find a better way to add the admin/campus template
     dir_path = Path(__file__).parent.parent.parent.resolve()
-    template_path = dir_path / 'themes' / '42ctf' / 'templates' / 'admin' / 'campus.html'
-    override_template('admin/campus.html', open(template_path).read())
+    template_path = (
+        dir_path / "themes" / "42ctf" / "templates" / "admin" / "campus.html"
+    )
+    override_template("admin/campus.html", open(template_path).read())

@@ -7,4 +7,4 @@ def unregister_route(app, rule):
                 app.url_map._rules_by_endpoint[r.endpoint][method].remove(r)
         if not app.url_map._rules_by_endpoint[r.endpoint]:
             del app.url_map._rules_by_endpoint[r.endpoint]
-    del app.view_functions['scoreboard.listing']
+    del app.view_functions["scoreboard.listing"]

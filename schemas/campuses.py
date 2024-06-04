@@ -1,4 +1,5 @@
 from CTFd.models import ma
+
 from ..models import Campuses
 
 

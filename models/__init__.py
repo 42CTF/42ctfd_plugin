@@ -3,12 +3,10 @@ from CTFd.models import db
 
 class Users(db.Model):
     __tablename__ = "users"
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
 
-    campus_id = db.Column(
-        db.Integer,
-        db.ForeignKey("campuses.id", ondelete="SET NULL")
-    )
+    campus_id = db.Column(db.Integer, db.ForeignKey("campuses.id", ondelete="SET NULL"))
+
 
 class Campuses(db.Model):
     __tablename__ = "campuses"

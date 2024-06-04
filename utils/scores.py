@@ -1,9 +1,8 @@
-from sqlalchemy.sql.expression import union_all
-
 from CTFd.cache import cache
 from CTFd.models import Awards, Challenges, Solves, db
 from CTFd.utils import app, get_config
 from CTFd.utils.dates import unix_time_to_utc
+from sqlalchemy.sql.expression import union_all
 
 from ..models import Campuses, Users
 
@@ -11,12 +10,15 @@ from ..models import Campuses, Users
 @cache.memoize(timeout=60)
 def get_standings(count=None, campus_id=None, admin=False, fields=None):
     """
-    Get standings as a list of tuples containing account_id, name, and score e.g. [(account_id, team_name, score)].
+    Get standings as a list of tuples containing account_id, name, and score
+    e.g. [(account_id, team_name, score)].
 
-    Ties are broken by who reached a given score first based on the solve ID. Two users can have the same score but one
-    user will have a solve ID that is before the others. That user will be considered the tie-winner.
+    Ties are broken by who reached a given score first based on the solve ID.
+    Two users can have the same score but one user will have a solve ID that is before
+    the others. That user will be considered the tie-winner.
 
-    Challenges & Awards with a value of zero are filtered out of the calculations to avoid incorrect tie breaks.
+    Challenges & Awards with a value of zero are filtered out of the calculations
+    to avoid incorrect tie breaks.
     """
     if fields is None:
         fields = []
@@ -77,7 +79,8 @@ def get_standings(count=None, campus_id=None, admin=False, fields=None):
     Filters out banned users.
     Properly resolves value ties by ID.
 
-    Different databases treat time precision differently so resolve by the row ID instead.
+    Different databases treat time precision differently so resolve by
+    the row ID instead.
     """
     if admin:
         standings_query = (
@@ -113,7 +116,7 @@ def get_standings(count=None, campus_id=None, admin=False, fields=None):
             )
             .join(sumscores, Users.id == sumscores.columns.account_id)
             .join(Campuses, isouter=True)
-            .filter(Users.banned == False, Users.hidden == False)
+            .filter(not Users.banned, not Users.hidden)
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
@@ -146,10 +149,11 @@ def get_campus_rankings(admin=None):
     # Initialize a dictionary to store scores per campus
     campus_scores = {
         campus.campus_id: {
-            'campus_name': campus.campus_name,
-            'total_score': 0,
-            'campus_slug': campus.campus_slug,
-        } for campus in all_campuses
+            "campus_name": campus.campus_name,
+            "total_score": 0,
+            "campus_slug": campus.campus_slug,
+        }
+        for campus in all_campuses
     }
 
     # Retrieve the standings of all users
@@ -161,9 +165,11 @@ def get_campus_rankings(admin=None):
         campus_id = standing.campus_id
         score = standing.score
         if campus_id in campus_scores:
-            campus_scores[campus_id]['total_score'] += score
+            campus_scores[campus_id]["total_score"] += score
 
-    # Convert the dictionary to a list of tuples and sort by total score in descending order
-    sorted_campuses = sorted(campus_scores.items(), key=lambda x: x[1]['total_score'], reverse=True)
+    # Convert the dictionary to a list of tuples and sort by total score descending
+    sorted_campuses = sorted(
+        campus_scores.items(), key=lambda x: x[1]["total_score"], reverse=True
+    )
 
     return sorted_campuses
