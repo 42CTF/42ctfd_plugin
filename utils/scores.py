@@ -116,7 +116,7 @@ def get_standings(count=None, campus_id=None, admin=False, fields=None):
             )
             .join(sumscores, Users.id == sumscores.columns.account_id)
             .join(Campuses, isouter=True)
-            .filter(not Users.banned, not Users.hidden)
+            .filter(Users.banned == False, Users.hidden == False)  # noqa: E712
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),

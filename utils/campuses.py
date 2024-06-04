@@ -1,6 +1,7 @@
 from CTFd.utils import app
 
 from ..models import Campuses, Users
+from .scores import get_standings
 
 
 def get_campus(_filter, admin=False):
@@ -32,22 +33,16 @@ def get_campus(_filter, admin=False):
         .join(Campuses)
         .filter(
             Users.campus_id == campus.id,
-            (not Users.hidden) if not admin else True,
-            (not Users.banned) if not admin else True,
+            (Users.hidden == False) if not admin else True,  # noqa: E712
+            (Users.banned == False) if not admin else True,  # noqa: E712
         )
         .all()
     )
 
-    from .scores import get_standings
-
-    standings = get_standings()
-    campus_standings = [
-        standing for standing in standings if standing.campus_id == campus.id
-    ]
-    campus_score = sum([standing.score for standing in campus_standings])
+    standings = get_standings(campus_id=campus.id)
 
     return {
         **dict(campus),
-        "score": int(campus_score),
+        "score": int(sum([standing.score for standing in standings])),
         "users": [dict(user) for user in users_object],
     }
