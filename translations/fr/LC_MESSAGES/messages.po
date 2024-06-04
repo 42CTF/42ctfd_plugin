@@ -1,0 +1,11 @@
+msgid "Network"
+msgstr "Réseau"
+
+msgid "Campus"
+msgid_plural "Campuses"
+msgstr[0] "Campus"
+msgstr[1] "Campus"
+
+msgid "Campuses"
+msgstr "Campus"
+
