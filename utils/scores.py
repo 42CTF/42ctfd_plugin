@@ -158,7 +158,6 @@ def get_campus_rankings(admin=None):
 
     # Retrieve the standings of all users
     standings = get_standings()
-    print("STANDINGS: ", standings)
 
     # Calculate the total score of each campus
     for standing in standings:

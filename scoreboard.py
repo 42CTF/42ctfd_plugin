@@ -26,6 +26,7 @@ def init(app):
             infos.append("Scores are not currently visible to users")
 
         standings = get_standings()
+
         return render_template(
             "scoreboard/global.html", standings=standings, infos=infos
         )
@@ -44,10 +45,6 @@ def init(app):
 
         campuses = get_campus_rankings()
 
-        for campus in campuses:
-            campus[1]["campus_logo"] = f'images/logos/{campus[1]["campus_slug"]}.svg'
-            campus[1]["campus_url"] = f'/campus/{campus[1]["campus_slug"]}'
-
         podium = campuses[:3]
         for i in range(3 - len(podium)):
             podium.append(
@@ -57,13 +54,10 @@ def init(app):
                         "campus_name": "N/A",
                         "total_score": 0,
                         "campus_slug": None,
-                        "campus_logo": None,
-                        "campus_url": "#",
                     },
                 )
             )
 
-        print("BRACKETS: ", campuses)
         return render_template(
             "scoreboard/campus.html", infos=infos, campuses=campuses, podium=podium
         )
