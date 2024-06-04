@@ -1,6 +1,5 @@
 from sqlalchemy.sql.expression import union_all
 
-from CTFd.utils.modes import get_model
 from CTFd.cache import cache
 from CTFd.models import Awards, Challenges, Solves, db
 from CTFd.utils import app, get_config
@@ -137,16 +136,14 @@ def get_standings(count=None, campus_id=None, admin=False, fields=None):
 
 @cache.memoize(timeout=60)
 def get_campus_rankings(admin=None):
-    Model = get_model()
-
-    # Récupérer tous les campuses
+    # Retrieve all campuses
     all_campuses = app.db.session.query(
         Campuses.id.label("campus_id"),
         Campuses.name.label("campus_name"),
         Campuses.slug.label("campus_slug"),
     ).all()
 
-    # Initialiser un dictionnaire pour stocker les scores par campus
+    # Initialize a dictionary to store scores per campus
     campus_scores = {
         campus.campus_id: {
             'campus_name': campus.campus_name,
@@ -155,18 +152,18 @@ def get_campus_rankings(admin=None):
         } for campus in all_campuses
     }
 
-    # Récupérer les standings de tous les utilisateurs
+    # Retrieve the standings of all users
     standings = get_standings()
     print("STANDINGS: ", standings)
 
-    # Grouper les scores par campus
+    # Calculate the total score of each campus
     for standing in standings:
         campus_id = standing.campus_id
         score = standing.score
         if campus_id in campus_scores:
             campus_scores[campus_id]['total_score'] += score
 
-    # Convertir le dictionnaire en liste de tuples et trier par score total décroissant
+    # Convert the dictionary to a list of tuples and sort by total score in descending order
     sorted_campuses = sorted(campus_scores.items(), key=lambda x: x[1]['total_score'], reverse=True)
 
     return sorted_campuses

@@ -4,12 +4,11 @@ from flask_restx import Namespace, Resource
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.constants import RawEnum
 from CTFd.models import db
-from CTFd.cache import cache
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.user import is_admin
 from CTFd.utils.helpers.models import build_model_filters
 
-from ...models import Campuses, Users
+from ...models import Campuses
 from ...schemas.campuses import CampusSchema
 from ...utils import get_campus
 
