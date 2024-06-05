@@ -10,10 +10,12 @@ from CTFd.utils.user import is_admin
 from flask import render_template
 
 from .utils import get_campus_rankings, get_standings, unregister_route
+from .utils.decorators import ft_theme
 
 
 def init(app):
     @scoreboard_blueprint.route("/scoreboard/global", endpoint="global")
+    @ft_theme()
     @check_account_visibility
     @check_score_visibility
     def scoreboard_global():
@@ -32,6 +34,7 @@ def init(app):
         )
 
     @scoreboard_blueprint.route("/scoreboard/campus", endpoint="campus")
+    @ft_theme()
     @check_account_visibility
     @check_score_visibility
     def scoreboard_campus():
